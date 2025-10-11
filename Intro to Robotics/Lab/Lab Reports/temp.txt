@@ -1,0 +1,43 @@
+function sysCall_init()
+    sim= require('sim')  -- Core API
+    matrix= require('matrix')  -- For matrix ops (CoppeliaSim's built-in)
+    
+    -- Get handles (assume objects named /R0, /R1, /R2 in scene)
+    R0 = sim.getObjectHandle('/R0')    
+    R1 = sim.getObjectHandle('/R1') 
+    R2 = sim.getObjectHandle('/R2')  
+    
+    -- Initial positions: Ensure at origin (optional, for reset)
+    sim.setObjectPosition(R1, -1, {0, 0, 0})
+    sim.setObjectPosition(R2, -1, {0, 0, 0})
+    sim.setObjectPosition(R0, -1, {0, 0, 0})
+    
+    theta1 = math.pi / 4  -- 45° in radians
+    Rz1 = Matrix3x3:rotz(theta1)  -- Rotation matrix
+    t1 = Vector3({0.432, 0, 0})  -- Translation vector
+    T1 = Matrix4x4:fromrt(Rz1, t1)
+    
+    theta2 = 54 * math.pi / 180  -- 
+    Ry2 = Matrix3x3:roty(theta2)
+    t2 = Vector3({0, 0, 0.219})
+    T2 = Matrix4x4:fromrt(Ry2, t2)
+    sim.setObjectMatrix(R1, R0, T1:data())
+    sim.setObjectMatrix(R2, R1, T2:data())
+    local R2_world_pos = sim.getObjectPosition(R2, -1)
+    print(string.format("R2 Global Position: x=%.3f, y=%.3f, z=%.3f", 
+    R2_world_pos[1], R2_world_pos[2], R2_world_pos[3]))
+end
+
+function sysCall_actuation()
+
+end
+
+function sysCall_sensing()
+    -- put your sensing code here
+end
+
+function sysCall_cleanup()
+    -- do some clean-up here
+end
+
+-- See the user manual or the available code snippets for additional callback functions and details
